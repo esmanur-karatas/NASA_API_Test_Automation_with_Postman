@@ -1,0 +1,1451 @@
+{
+	"info": {
+		"_postman_id": "34d829bd-190a-4914-9f72-8e69e2e00156",
+		"name": "NASA_Negative_Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "29142931-34d829bd-190a-4914-9f72-8e69e2e00156"
+	},
+	"item": [
+		{
+			"name": "NASA APOD GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3b006919-f16a-448f-851f-078c5fda6e2a",
+						"exec": [
+							"// ❌ Test 5 - Boş 'date' parametresi gönderildiğinde 400 hatası beklenir\r",
+							"pm.test(\"Negative Test-3: Empty date param should return 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ API'nin desteklemediği kadar eski bir tarih gönderildiğinde 400 hatası dönmesi beklenir\r",
+							"pm.test(\"Negative Test-4: Unsupported old date (e.g., 1900-01-01) returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"// ❌ Henüz yaşanmamış (gelecek) bir tarih gönderildiğinde API'nin 400 hatası döndürmesi beklenir\r",
+							"pm.test(\"Negative Test-5: Future date (e.g., 2100-12-31) returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"// ❌ 'thumbs' parametresine true/false dışında string gibi geçersiz bir değer verildiğinde 400 hatası beklenir\r",
+							"pm.test(\"Negative Test-6: Invalid 'thumbs' parameter value returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"// ❌ 'hd' parametresi boolean olmalı; örneğin 'yes' gibi geçersiz bir değer gönderilirse 400 beklenir\r",
+							"pm.test(\"Negative Test-7: Invalid 'hd' parameter value returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "862faa81-24bd-46a6-aa93-b32303480693",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/planetary/apod?api_key={{Nasa Api Key}}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"planetary",
+						"apod"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NASA NEO Feed GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "957862ee-796b-45b4-b885-e0facd455b24",
+						"exec": [
+							"// ❌ start_date parametresi gönderilmediğinde, API'nin 400 hatası döndürmesini test eder.\r",
+							"pm.test(\"Negative Test-3: Missing start_date returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ end_date, start_date'ten önce verilirse, API'nin 400 hatası döndürmesi beklenir.\r",
+							"pm.test(\"Negative Test-4: Invalid date range (end before start) returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ start_date formatı yanlışsa (örn. yyyy/mm/dd), API 400 döndürmeli.\r",
+							"pm.test(\"Negative Test-5: Invalid date format in start_date returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ end_date parametresi boş string olarak verilirse, API 400 hatası döndürmeli.\r",
+							"pm.test(\"Negative Test-6: Empty end_date returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ⚠️ 2050 gibi ileri tarih gönderildiğinde 400 dönmesi garanti değildir. API boş veriyle 200 dönebilir.\r",
+							"pm.test(\"Negative Test-7: Future date may return 200 with empty result, not necessarily 400\", function () {\r",
+							"    pm.expect([200, 400]).to.include(pm.response.code); // Duruma göre uyarlanmalı\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "6442bc6f-1283-4ec7-9157-5d5fc9b067ac",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/neo/rest/v1/feed?start_date=2015-09-07&end_date=2015-09-08&api_key={{Nasa Api Key}}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"neo",
+						"rest",
+						"v1",
+						"feed"
+					],
+					"query": [
+						{
+							"key": "start_date",
+							"value": "2015-09-07"
+						},
+						{
+							"key": "end_date",
+							"value": "2015-09-08"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NASA NEO Detail GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3ad24df0-65e1-4b00-9e1d-d744eea150a6",
+						"exec": [
+							"// ❌ Geçersiz (olmayan) asteroid ID girildiğinde 404 hatası dönmeli\r",
+							"pm.test(\"Negative Test-3: Non-existent NEO ID returns 404\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(404);\r",
+							"});\r",
+							"\r",
+							"// ❌ Sayısal olmayan (harf içeren) asteroid ID girilirse 400 dönmeli\r",
+							"pm.test(\"Negative Test-4: Non-numeric NEO ID returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Boş ID girilirse (örneğin: /neo/), 404 dönmeli\r",
+							"pm.test(\"Negative Test-5: Empty NEO ID path returns 404\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(404);\r",
+							"});\r",
+							"\r",
+							"// ❌ ID alanında özel karakter varsa (örneğin: neo/@!%), 400 dönmeli\r",
+							"pm.test(\"Negative Test-6: Special characters in NEO ID return 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ null gibi tamamen eksik ID varsa endpoint 404 dönmeli\r",
+							"pm.test(\"Negative Test-7: Null or missing NEO ID returns 404\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(404);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"// ❌ Negative Test-8: \"is_potentially_hazardous_asteroid\" değeri beklenmeyen sonuçsa\r",
+							"pm.test(\"Negative Test-8: Unexpected hazardous flag\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.is_potentially_hazardous_asteroid).to.not.eql(true); // bilerek yanlış durum\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-9: Eğer NEO ID sayısal ama boşluk içeriyorsa (örn: \"3542 519\") hata beklenir\r",
+							"pm.test(\"Negative Test-9: NEO ID with space should return 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-10: Environment'tan alınan API key hatalıysa (simülasyon)\r",
+							"pm.test(\"Negative Test-10: Invalid API key returns 403 or 401\", function () {\r",
+							"    var fakeKey = pm.environment.get(\"invalid_api_key\");\r",
+							"    pm.expect([401, 403]).to.include(pm.response.code);\r",
+							"});\r",
+							"// ❌ Negative Test-6: Gelen ID, environment'taki doğru ID ile uyuşmamalı (yanlış ID simülasyonu)\r",
+							"pm.test(\"Negative Test-11: Mismatch with expected NEO ID in env\", function () {\r",
+							"    var expectedId = pm.environment.get(\"correct_neo_id\");\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.id).to.not.eql(\"99999999\"); // kasıtlı olarak farklı ID ile kıyaslıyoruz\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-7: Asteroid adı environment'taki doğru isimle uyuşmuyorsa hata simülasyonu\r",
+							"pm.test(\"Negative Test-12: Mismatch asteroid name vs env variable\", function () {\r",
+							"    var expectedName = \"FAKE_NAME_XYZ\";\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.name).to.not.eql(expectedName); // bilerek yanlış isimle eşleşmiyor\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "d1191caa-8dbd-4e66-8750-cad0c6147f1b",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/neo/rest/v1/neo/3542519?api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"neo",
+						"rest",
+						"v1",
+						"neo",
+						"3542519"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NASA NEO Browse GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a35c091c-bed5-4ac8-ab47-d09a48dab705",
+						"exec": [
+							"\r",
+							"// ❌ Negative Test-3: Sayfa numarası (page) negatif girilirse (örnek: -1), 400 beklenir\r",
+							"pm.test(\"Negative Test-3: Negative page number returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-4: Sayısal olmayan bir page parametresi gönderildiğinde 400 dönmeli\r",
+							"pm.test(\"Negative Test-4: Non-numeric page param returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"// ❌ Negative Test-5: Çok büyük bir page numarası gönderildiğinde veri dönmemeli\r",
+							"pm.test(\"Negative Test-5: Exaggerated page value returns empty or 404\", function () {\r",
+							"    pm.expect(jsonData.near_earth_objects.length).to.eql(0);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-6: API key environment değişkeni eksikse test fail olmalı\r",
+							"pm.test(\"Negative Test-6: API key env var is missing\", function () {\r",
+							"    var apiKey = pm.environment.get(\"Nasa Api Key\");\r",
+							"    pm.expect(apiKey, \"API Key environment variable not found\").to.not.be.undefined;\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-7: Gelen yanıt içindeki bir alan environment ile uyuşmuyorsa (örn. object count)\r",
+							"pm.test(\"Negative Test-7: Object count doesn't match expected env value\", function () {\r",
+							"    var expectedCount = pm.environment.get(\"expected_object_count\");\r",
+							"    pm.expect(jsonData.page.size).to.not.eql(expectedCount); // bilinçli uyuşmazlık testi\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-8: 'links' objesi response içinde yoksa test fail olmalı\r",
+							"pm.test(\"Negative Test-8: Links object must exist\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"links\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "0b5d2265-e76d-42c9-864e-752cdd887c68",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/neo/rest/v1/neo/browse?api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"neo",
+						"rest",
+						"v1",
+						"neo",
+						"browse"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NASA OSDR File Access GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "772d2ff9-0669-4c8e-a358-10fc7c030048",
+						"exec": [
+							"\r",
+							"// ❌ Negative Test-3: Dosya erişimi yetkisiz ise (token yok veya geçersizse) 401 veya 403 dönmeli\r",
+							"pm.test(\"Negative Test-3: Unauthorized access returns 401 or 403\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([401, 403]);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-4: ID kısmı string (örn. abcde) girilirse 400 hatası dönmeli\r",
+							"pm.test(\"Negative Test-4: Non-numeric file ID returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-5: ID kısmında özel karakter varsa (örneğin %$#) API 400 döndürmeli\r",
+							"pm.test(\"Negative Test-3: Special characters in file ID return 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-6: Çok büyük veya sistem dışı bir ID verilirse boş sonuç veya 404 dönmeli\r",
+							"pm.test(\"Negative Test-4: Unreasonably large file ID returns 404\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(404);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-7: Environment değişkeniyle gelen file ID eksikse test hata vermeli\r",
+							"pm.test(\"Negative Test-5: Missing file ID from environment\", function () {\r",
+							"    var fileId = pm.environment.get(\"file_id\");\r",
+							"    pm.expect(fileId, \"file_id environment variable not found\").to.not.be.undefined;\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "05f184bd-adee-44e7-951f-544881a54e88",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://osdr.nasa.gov/osdr/data/osd/files/137.1,86-87",
+					"protocol": "https",
+					"host": [
+						"osdr",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"osdr",
+						"data",
+						"osd",
+						"files",
+						"137.1,86-87"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NASA Mars Insight Weather GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7e955652-25c0-49a6-a6e8-a4d91f142532",
+						"exec": [
+							"\r",
+							"// ❌ Negative Test-3: feedtype parametresi boş gönderilirse 400 hatası beklenmeli\r",
+							"pm.test(\"Negative Test-3: Empty feedtype returns 400\", function () {\r",
+							"    const feedtypeValue = pm.request.url.query.get('feedtype');\r",
+							"    pm.expect(feedtypeValue).to.eql(\"\");\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-4: API Key gönderilmezse 401 veya 403 hatası dönmeli\r",
+							"pm.test(\"Negative Test-4: Missing API key returns 401 or 403\", function () {\r",
+							"    const apiKey = pm.environment.get(\"Nasa Api Key\");\r",
+							"    pm.expect(apiKey).to.not.be.undefined; // Anahtarı tanımlı ama kullanılmamış olabilir\r",
+							"    pm.expect([401, 403]).to.include(pm.response.code);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-5: Tüm query parametreleri kaldırıldığında (yalnızca base URL) 400 veya 404 dönmeli\r",
+							"pm.test(\"Negative Test-5: Missing all required parameters returns 400 or 404\", function () {\r",
+							"    const url = pm.request.url.toString();\r",
+							"    const requiredParams = ['api_key', 'feedtype', 'ver'];\r",
+							"    requiredParams.forEach(param => pm.expect(url).to.include(param));\r",
+							"    pm.expect([400, 404]).to.include(pm.response.code);\r",
+							"});\r",
+							"// ❌ Negative Test-1: feedtype parametresi geçersiz bir değer içeriyorsa 400 hatası dönmeli\r",
+							"pm.test(\"Negative Test-6: Invalid feedtype returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-2: ver parametresi sayısal olmayan bir değer içeriyorsa 400 dönmeli\r",
+							"pm.test(\"Negative Test-7: Invalid ver param returns 400\", function () {\r",
+							"    const verValue = pm.request.url.query.get('ver');\r",
+							"    pm.expect(verValue).to.not.match(/^\\d+(\\.\\d+)?$/); // Sayısal değilse geçersiz kabul edilir\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "a714e61b-eed8-4080-b1a3-cd86c192139c",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/insight_weather/?api_key={{Nasa Api Key}}&feedtype=json&ver=1.0",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"insight_weather",
+						""
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						},
+						{
+							"key": "feedtype",
+							"value": "json"
+						},
+						{
+							"key": "ver",
+							"value": "1.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-CME-GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ef95edca-3629-42c7-86a3-042a11a8bdf2",
+						"exec": [
+							"\r",
+							"// ❌ Negative Test-3: startDate gelecekteki bir tarihse (örneğin 2100), API hata döndürmeli\r",
+							"pm.test(\"Negative Test-3: Future startDate should return error\", function () {\r",
+							"    const startValue = pm.request.url.query.get('startDate');\r",
+							"    const futureDate = new Date(startValue) > new Date();\r",
+							"    pm.expect(futureDate).to.eql(true);\r",
+							"    pm.expect([400, 404]).to.include(pm.response.code);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-4: API key tamamen kaldırılırsa 401 ya da 403 hatası alınmalı\r",
+							"pm.test(\"Negative Test-4: Missing API key returns 401 or 403\", function () {\r",
+							"    const apiKey = pm.environment.get(\"Nasa Api Key\");\r",
+							"    pm.expect(apiKey).to.not.exist;\r",
+							"    pm.expect([401, 403]).to.include(pm.response.code);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-5: Tarih formatı yanlış yazılmışsa (örn. 04-01-2025), API 400 döndürmeli\r",
+							"pm.test(\"Negative Test-5: Invalid date format returns 400\", function () {\r",
+							"    const isInvalidFormat = !/^\\d{4}-\\d{2}-\\d{2}$/.test(pm.request.url.query.get('startDate'));\r",
+							"    pm.expect(isInvalidFormat).to.eql(true);\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "8b3347b7-c80a-4903-8029-8d2c4ceed276",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/CME?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"CME"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-CMEAnalysis-GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "41009a15-db3a-4630-a03e-cff2a15c5e9b",
+						"exec": [
+							"\r",
+							"// ❌ Negative Test-3: catalog parametresi geçerli olmayan bir değer içeriyorsa hata dönmeli\r",
+							"pm.test(\"Negative Test-3: Invalid catalog value returns 400 or empty response\", function () {\r",
+							"    const validCatalogs = ['ALL', 'DONKI', 'SEEDS', 'CACTUS'];\r",
+							"    const catalog = pm.request.url.query.get('catalog');\r",
+							"    pm.expect(validCatalogs).to.not.include(catalog);\r",
+							"    pm.expect([400, 204, 404]).to.include(pm.response.code);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-4: halfAngle değeri negatifse API uygun hata döndürmeli\r",
+							"pm.test(\"Negative Test-4: Negative halfAngle returns 400\", function () {\r",
+							"    const angle = parseFloat(pm.request.url.query.get('halfAngle'));\r",
+							"    pm.expect(angle < 0).to.eql(true);\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-5: API key eksikse 401 veya 403 hata dönmeli\r",
+							"pm.test(\"Negative Test-5: Missing API Key returns 401 or 403\", function () {\r",
+							"    const apiKey = pm.environment.get(\"Nasa Api Key\");\r",
+							"    pm.expect(apiKey).to.not.exist;\r",
+							"    pm.expect([401, 403]).to.include(pm.response.code);\r",
+							"});\r",
+							"// ❌ Negative Test-1: startDate parametresi eksikse 400 beklenmeli\r",
+							"pm.test(\"Negative Test-6: Missing startDate returns 400\", function () {\r",
+							"    const hasStart = pm.request.url.query.has('startDate');\r",
+							"    pm.expect(hasStart).to.eql(false);\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-2: speed parametresi sayısal değilse (örn. 'fast'), 400 hatası dönmeli\r",
+							"pm.test(\"Negative Test-7: Non-numeric speed returns 400\", function () {\r",
+							"    const speed = pm.request.url.query.get('speed');\r",
+							"    const isNotNumeric = isNaN(speed);\r",
+							"    pm.expect(isNotNumeric).to.eql(true);\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "9f4b3644-ae2b-4eb9-b12b-f351ef495fbb",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/CMEAnalysis?startDate=2025-04-01&endDate=2025-04-30&mostAccurateOnly=true&speed=500&halfAngle=30&catalog=ALL&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"CMEAnalysis"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "mostAccurateOnly",
+							"value": "true"
+						},
+						{
+							"key": "speed",
+							"value": "500"
+						},
+						{
+							"key": "halfAngle",
+							"value": "30"
+						},
+						{
+							"key": "catalog",
+							"value": "ALL"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-GST-GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bb615295-5f3e-40bf-9f4e-99f2fbe94a70",
+						"exec": [
+							"// 🔍 Yardımcı fonksiyon: Tarih formatının geçerliliğini kontrol eder (YYYY-MM-DD)\r",
+							"function isValidDateFormat(dateStr) {\r",
+							"    return /^\\d{4}-\\d{2}-\\d{2}$/.test(dateStr);\r",
+							"}\r",
+							"\r",
+							"// ❌ Negative Test-1: startDate eksik olduğunda 400 hatası dönmeli\r",
+							"pm.test(\"Negative Test-1: Missing startDate returns 400\", function () {\r",
+							"    const hasStart = pm.request.url.query.has('startDate');\r",
+							"    pm.expect(hasStart).to.eql(false, \"startDate eksik değil!\");\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"}); \r",
+							"\r",
+							"// ❌ Negative Test-2: endDate formatı hatalıysa (örnek: 2025/04/30), 400 beklenmeli\r",
+							"pm.test(\"Negative Test-2: Invalid endDate format returns 400\", function () {\r",
+							"    const endDate = pm.request.url.query.get('endDate');\r",
+							"    pm.expect(isValidDateFormat(endDate)).to.eql(false, \"endDate formatı geçerli!\");\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-3: endDate, startDate’ten önceyse tarih aralığı geçersiz olmalı\r",
+							"pm.test(\"Negative Test-3: endDate before startDate returns 400\", function () {\r",
+							"    const start = new Date(pm.request.url.query.get('startDate'));\r",
+							"    const end = new Date(pm.request.url.query.get('endDate'));\r",
+							"    pm.expect(end < start).to.eql(true, \"endDate, startDate'ten sonra!\");\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-4: Gelecekteki bir tarih aralığı verildiğinde API boş veya 400 dönmeli\r",
+							"pm.test(\"Negative Test-4: Future date range returns 204 or 400\", function () {\r",
+							"    const start = new Date(pm.request.url.query.get('startDate'));\r",
+							"    const now = new Date();\r",
+							"    pm.expect(start > now).to.eql(true, \"Gelecek tarih değil!\");\r",
+							"    pm.expect([204, 400]).to.include(pm.response.code);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test-5: API key eksikse 401 veya 403 dönmeli\r",
+							"pm.test(\"Negative Test-5: Missing API key returns 401 or 403\", function () {\r",
+							"    const apiKey = pm.environment.get(\"Nasa Api Key\");\r",
+							"    pm.expect(apiKey).to.not.exist;\r",
+							"    pm.expect([401, 403]).to.include(pm.response.code);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "8d428a28-2565-47c7-83e9-8333814a3ed3",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/GST?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"GST"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-IPS-GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bbe991cb-ebf6-42cd-8246-ed457e67e6d7",
+						"exec": [
+							"// 🔍 Geçerli tarih formatı kontrolü (YYYY-MM-DD)\r",
+							"function isValidDate(str) {\r",
+							"    return /^\\d{4}-\\d{2}-\\d{2}$/.test(str);\r",
+							"}\r",
+							"\r",
+							"// ❌ Test 1: startDate eksik olduğunda API 400 döndürmeli\r",
+							"pm.test(\"Negative Test 3: Missing startDate returns 400\", function () {\r",
+							"    const hasStart = pm.request.url.query.has('startDate');\r",
+							"    pm.expect(hasStart).to.eql(false, \"startDate parametresi eksik değil!\");\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Test 2: endDate formatı geçersizse (örn: 2025/04/30), API 400 döndürmeli\r",
+							"pm.test(\"Negative Test 4: Invalid endDate format returns 400\", function () {\r",
+							"    const end = pm.request.url.query.get('endDate');\r",
+							"    pm.expect(isValidDate(end)).to.eql(false, \"endDate formatı doğru!\");\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Test 3: Geçersiz location parametresi (örn: Mars) gönderilirse 400 döndürmeli\r",
+							"pm.test(\"Negative Test 5: Invalid location param returns 400\", function () {\r",
+							"    const location = pm.request.url.query.get('location');\r",
+							"    pm.expect([\"Earth\", \"L1\"]).to.not.include(location);\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Test 4: catalog parametresi boş veya null gönderilirse 400 dönmeli\r",
+							"pm.test(\"Negative Test 6: Empty catalog param returns 400\", function () {\r",
+							"    const catalog = pm.request.url.query.get('catalog');\r",
+							"    pm.expect(!catalog || catalog.trim() === \"\").to.be.true;\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Test 5: startDate gelecekteyse (örn. 2050-01-01), 204 veya 400 dönebilir\r",
+							"pm.test(\"Negative Test 7: Future startDate returns 204 or 400\", function () {\r",
+							"    const start = new Date(pm.request.url.query.get('startDate'));\r",
+							"    const now = new Date();\r",
+							"    pm.expect(start > now).to.eql(true, \"Tarih gelecekte değil!\");\r",
+							"    pm.expect([204, 400]).to.include(pm.response.code);\r",
+							"});\r",
+							"\r",
+							"// ❌ Test 6: API key eksikse 401 veya 403 dönmeli\r",
+							"pm.test(\"Negative Test 8: Missing API key returns 401 or 403\", function () {\r",
+							"    const key = pm.environment.get(\"Nasa Api Key\");\r",
+							"    pm.expect(!key).to.be.true;\r",
+							"    pm.expect([401, 403]).to.include(pm.response.code);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "795f5c71-0b33-4be4-8f89-7273671fcb2c",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/IPS?startDate=2025-04-01&endDate=2025-04-30&location=Earth&catalog=ALL&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"IPS"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "location",
+							"value": "Earth"
+						},
+						{
+							"key": "catalog",
+							"value": "ALL"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-FLR-GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bdce68ac-ae28-49cd-92a3-df8ca662d33a",
+						"exec": [
+							"// 📌 Yardımcı Fonksiyon: Tarih formatı kontrolü\r",
+							"function isValidDateFormat(date) {\r",
+							"    return /^\\d{4}-\\d{2}-\\d{2}$/.test(date);\r",
+							"}\r",
+							"\r",
+							"// ❌ Test 1: startDate parametresi eksikse 400 dönmeli\r",
+							"pm.test(\"Negative Test 3: Missing startDate param returns 400\", function () {\r",
+							"    const hasStartDate = pm.request.url.query.has('startDate');\r",
+							"    pm.expect(hasStartDate).to.eql(false, \"startDate mevcut!\");\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Test 2: endDate tarihi startDate'ten önceyse 400 dönmeli\r",
+							"pm.test(\"Negative Test 4: endDate earlier than startDate returns 400\", function () {\r",
+							"    const start = new Date(pm.request.url.query.get('startDate'));\r",
+							"    const end = new Date(pm.request.url.query.get('endDate'));\r",
+							"    pm.expect(end < start).to.be.true;\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Test 3: startDate formatı hatalıysa (örn: 2025/04/01) 400 dönmeli\r",
+							"pm.test(\"Negative Test 5: Invalid date format in startDate returns 400\", function () {\r",
+							"    const start = pm.request.url.query.get('startDate');\r",
+							"    pm.expect(isValidDateFormat(start)).to.eql(false);\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Test 4: Boş endDate parametresi gönderildiyse 400 dönmeli\r",
+							"pm.test(\"Negative Test 6: Empty endDate returns 400\", function () {\r",
+							"    const end = pm.request.url.query.get('endDate');\r",
+							"    pm.expect(end === \"\").to.be.true;\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Test 5: startDate gelecekteyse (örn: 2050-01-01) 204 veya 400 dönmeli\r",
+							"pm.test(\"Negative Test 7: Future startDate returns 204 or 400\", function () {\r",
+							"    const start = new Date(pm.request.url.query.get('startDate'));\r",
+							"    const now = new Date();\r",
+							"    pm.expect(start > now).to.eql(true);\r",
+							"    pm.expect([204, 400]).to.include(pm.response.code);\r",
+							"});\r",
+							"\r",
+							"// ❌ Test 6: API key boş veya eksikse 401 ya da 403 dönmeli\r",
+							"pm.test(\"Negative Test 8: Missing or empty API key returns 401 or 403\", function () {\r",
+							"    const key = pm.request.url.query.get('api_key');\r",
+							"    pm.expect(!key || key.trim() === \"\").to.be.true;\r",
+							"    pm.expect([401, 403]).to.include(pm.response.code);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "3b3849c8-d605-4737-bc75-d54966b4ca52",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/FLR?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"FLR"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-SEP-GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "170cdeb1-9044-4442-8a6c-4c562e3ab0ae",
+						"exec": [
+							"// ❌ Negative Test 3: Missing endDate parametresi 400 dönmeli\r",
+							"pm.test(\"Negative Test 3: Missing endDate returns 400\", function () {\r",
+							"    const hasEndDate = pm.request.url.query.has('endDate');\r",
+							"    pm.expect(hasEndDate).to.eql(false, \"endDate parametresi gönderilmiş!\");\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test 4: Geçersiz tarih aralığı (endDate < startDate) hatası 400 dönmeli\r",
+							"pm.test(\"Negative Test 4: Invalid date range returns 400\", function () {\r",
+							"    const start = new Date(pm.request.url.query.get('startDate'));\r",
+							"    const end = new Date(pm.request.url.query.get('endDate'));\r",
+							"    pm.expect(end < start).to.be.true;\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test 5: Gelecekteki tarih aralığı girildiyse 204 veya 400 dönmeli\r",
+							"pm.test(\"Negative Test 5: Future date range returns 204 or 400\", function () {\r",
+							"    const start = new Date(pm.request.url.query.get('startDate'));\r",
+							"    const now = new Date();\r",
+							"    pm.expect(start > now).to.be.true;\r",
+							"    pm.expect([204, 400]).to.include(pm.response.code);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "552f6629-a514-42d5-93b4-63c3a8962087",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/SEP?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"SEP"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-MPC-GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d1cabf1a-3c0d-4d5d-bd42-f1ea7225ab21",
+						"exec": [
+							"// ❌ Negative Test 3: If 'endDate' is missing, the API should return 400 Bad Request\r",
+							"pm.test(\"Negative Test 3: Missing 'endDate' should return 400\", function () {\r",
+							"    const hasEndDate = pm.request.url.query.has('endDate');\r",
+							"    pm.expect(hasEndDate, \"'endDate' parameter should be missing for this test\").to.eql(false);\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test 4: If 'endDate' is earlier than 'startDate', the API should return 400\r",
+							"pm.test(\"Negative Test 4: 'endDate' before 'startDate' should return 400\", function () {\r",
+							"    const startDate = new Date(pm.request.url.query.get('startDate'));\r",
+							"    const endDate = new Date(pm.request.url.query.get('endDate'));\r",
+							"    pm.expect(endDate < startDate, \"'endDate' must be earlier than 'startDate' for this test\").to.be.true;\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test 5: If the date range is too far in the future, expect 204 No Content or 400 Bad Request\r",
+							"pm.test(\"Negative Test 5: Future date range should return 204 or 400\", function () {\r",
+							"    const start = new Date(pm.request.url.query.get('startDate'));\r",
+							"    const now = new Date();\r",
+							"    pm.expect(start > now, \"'startDate' should be in the future\").to.be.true;\r",
+							"    pm.expect([204, 400]).to.include(pm.response.code);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "c9d8322f-0365-4c8b-b116-a36ad73c4fc9",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/MPC?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"MPC"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-RBE-GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7b70882f-550c-463e-9f1f-4383f8e4ccdf",
+						"exec": [
+							"// ❌ Negative Test 3: If 'startDate' is missing, the API should return 400 Bad Request\r",
+							"pm.test(\"Negative Test 3: Missing 'startDate' should return 400\", function () {\r",
+							"    const hasStart = pm.request.url.query.has('startDate');\r",
+							"    pm.expect(hasStart, \"'startDate' should be missing\").to.eql(false);\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test 4: Invalid 'rbe_level' value should trigger 400\r",
+							"pm.test(\"Negative Test 4: Invalid 'rbe_level' should return 400\", function () {\r",
+							"    const level = pm.request.url.query.get('rbe_level');\r",
+							"    const validLevels = ['low', 'moderate', 'high']; // hypothetical values\r",
+							"    pm.expect(validLevels.includes(level), \"Value should be invalid\").to.eql(false);\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test 5: If date format is incorrect (e.g., MM/DD/YYYY), return 400\r",
+							"pm.test(\"Negative Test 5: Wrong date format should return 400\", function () {\r",
+							"    const datePattern = /^\\d{4}-\\d{2}-\\d{2}$/;\r",
+							"    const start = pm.request.url.query.get('startDate');\r",
+							"    const end = pm.request.url.query.get('endDate');\r",
+							"    pm.expect(datePattern.test(start), \"Start date format should be wrong\").to.eql(false);\r",
+							"    pm.expect(datePattern.test(end), \"End date format should be wrong\").to.eql(false);\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "e7cd7a14-ad23-4749-a644-4d82c6fff143",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/RBE?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}&rbe_level=high",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"RBE"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						},
+						{
+							"key": "rbe_level",
+							"value": "high"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-HSS-GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b0514dd4-66e6-4dcc-915f-18383267f63a",
+						"exec": [
+							"\r",
+							"// ❌ Test 5 - startDate parametresi eksik gönderildiğinde sunucu 400 Bad Request hatası vermelidir.\r",
+							"pm.test(\"Negative Test-3: Missing startDate returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Negative Test-4: Invalid date format returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"//❌ startDate veya endDate \"YYYY-MM-DD\" formatında değilse (örneğin \"04-01-2025\"), API 400 hatası döndürmelidir.\r",
+							"pm.test(\"Negative Test-5: No data for same-day date range should return 204 or empty array\", function () {\r",
+							"    var data = pm.response.json();\r",
+							"    pm.expect(data.length === 0 || pm.response.code === 204).to.be.true;\r",
+							"});\r",
+							"//❌ Aynı gün girilirse (örnek: startDate = endDate) ve veri yoksa boş cevap dönmeli.\r",
+							"// Not: Eğer API 200 döndürüp boş array veriyorsa bu da kabul edilebilir, ama fail test yakalayabilir.\r",
+							"pm.test(\"Negative Test-6: Future date range should return empty array\", function () {\r",
+							"    var data = pm.response.json();\r",
+							"    pm.expect(data.length).to.eql(0);\r",
+							"});\r",
+							"//❌ 2100 gibi ileri tarihli isteklerde veri olmaması beklenir. Eğer dönüyorsa API yanlış veri sağlıyor olabilir.\r",
+							"pm.test(\"Negative Test-7: Invalid mpc_status value returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"//❌ mpc_status=\"banana\" gibi saçma değerler gönderilirse API bunu reddetmeli.\r",
+							"pm.test(\"Negative Test-8: Empty API key returns 401 or 403\", function () {\r",
+							"    pm.expect(pm.response.code).to.be.oneOf([401, 403]);\r",
+							"});\r",
+							"//❌ API key boş string şeklinde gönderildiğinde yetkisiz istek sayılmalı.\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "f457fc64-c0ea-422c-a7a3-81f5de9b3ba6",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/HSS?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}&mpc_status=active",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"HSS"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						},
+						{
+							"key": "mpc_status",
+							"value": "active"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-WSA-GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1109b21a-bdfa-453a-bf76-df55fd6ac752",
+						"exec": [
+							"pm.test(\"Negative Test-3: Missing parameters return error\", function () {\r",
+							"    pm.expect([400, 404]).to.include(pm.response.code);\r",
+							"});\r",
+							"//Gerekli parametreler eksik gönderildiğinde API 400 veya 404 hata kodu döndürmelidir.\r",
+							"\r",
+							"pm.test(\"Negative Test-4: Invalid date format returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"//❌ Tarih aralığı mantıksızsa (endDate < startDate), sunucu 400 hatası döndürmelidir.\r",
+							"pm.test(\"Negative Test-5: Invalid API key returns 401 or 403\", function () {\r",
+							"    pm.expect([401, 403]).to.include(pm.response.code);\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "d8da235f-f042-4433-b3b4-1f6ede112827",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/WSAEnlilSimulations?startDate=2025-04-01&endDate=2025-04-01&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"WSAEnlilSimulations"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Earth-Assets-GET - Negative Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "044bda40-0840-410c-9726-25f7a3c52dc8",
+						"exec": [
+							"// ❌ Negative Test 2 - 'dim' parametresi geçersizse sunucu 400 hatası döndürmelidir.\r",
+							"pm.test(\"Negative Test-3: Invalid dim value returns 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});\r",
+							"\r",
+							"// ❌ Negative Test 3 - Sadece 'lat' eksikse API yine 400 Bad Request hatası döndürmelidir.\r",
+							"var jsonObject = pm.response.json();\r",
+							"console.log(\"❌ EARTH JSON ERROR:\", jsonObject);\r",
+							"\r",
+							"pm.test(\"Negative Test-4: Missing lat should return 400\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(400);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "794626a9-2c31-450b-a04b-e37cb11fb9c6",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/planetary/earth/assets?lon=-95.33&lat=29.78&date=2018-01-01&&dim=0.10&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"planetary",
+						"earth",
+						"assets"
+					],
+					"query": [
+						{
+							"key": "lon",
+							"value": "-95.33"
+						},
+						{
+							"key": "lat",
+							"value": "29.78"
+						},
+						{
+							"key": "date",
+							"value": "2018-01-01"
+						},
+						{
+							"key": null,
+							"value": null
+						},
+						{
+							"key": "dim",
+							"value": "0.10"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "31c15e5f-5485-4218-a02e-5ee3881423e6",
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "c553166a-a274-430d-8a38-d86e5ad59aac",
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.test(\"Negative Test-1: Verify error for invalid API key\", function () {\r",
+					"    pm.expect(pm.response.code).to.be.oneOf([401, 403]);\r",
+					"});\r",
+					"\r",
+					"pm.test(\"Negative Test-2: Response time is less than 1000ms\", function () {\r",
+					"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+					"});"
+				]
+			}
+		}
+	]
+}

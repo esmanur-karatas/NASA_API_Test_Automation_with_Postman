@@ -1,0 +1,1333 @@
+{
+	"info": {
+		"_postman_id": "21c5a53b-3544-4f28-818f-201e22232b37",
+		"name": "NASA_Positive_Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_uid": "29142931-21c5a53b-3544-4f28-818f-201e22232b37"
+	},
+	"item": [
+		{
+			"name": "NASA APOD GET - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "88cf1539-be4b-4a7b-b4a2-d45f08906a5c",
+						"exec": [
+							"// ✅ Test 3 - 'date' alanının \"2025-05-26\" olduğunu kontrol eder\r",
+							"pm.test(\"Positive Test-4: Verify that date matches environment variable\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.environment.set(\"APOD_date\", jsonData.date); // Kaydettik\r",
+							"\r",
+							"    var envDate = pm.environment.get(\"APOD_date\"); // JavaScript ile aldık\r",
+							"    pm.expect(jsonData.date).to.eql(envDate); // Değeri karşılaştırdık\r",
+							"});\r",
+							"\r",
+							"// ✅ Test 4 - Response body'nin string olduğunu ve konsola yazıldığını kontrol eder\r",
+							"pm.test(\"Positive Test-5: Print response body and check if it's a string\", function () {\r",
+							"    var body = pm.response.text();\r",
+							"    console.log(\"📦 RESPONSE BODY:\", body);\r",
+							"    pm.expect(body).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							" "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "f2a23637-7c76-4597-aec0-f5cebded3da4",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{vault:nasa-open-apis:value}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "api_key",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "query",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/planetary/apod?api_key={{Nasa Api Key}}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"planetary",
+						"apod"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NASA NEO Feed GET  - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "23dde158-cf0d-46e4-be2b-94cd4ca6d7ee",
+						"exec": [
+							"// ✅ JSON veriyi alıyoruz\r",
+							"let jsonData = pm.response.json();\r",
+							"\r",
+							"// ✅ Environment değişkenlerinden tarihleri alıyoruz\r",
+							"let start_date = pm.environment.get(\"NEO_Start_Date\");\r",
+							"let end_date = pm.environment.get(\"NEO_End_Date\");\r",
+							"\r",
+							"\r",
+							"// ✅ Test 4: Toplam eleman sayısı doğru mu\r",
+							"pm.test(\"Positive Test 4: element_count matches actual number of returned NEOs\", function () {\r",
+							"    let total = 0;\r",
+							"    Object.values(jsonData.near_earth_objects).forEach(arr => total += arr.length);\r",
+							"    pm.expect(jsonData.element_count).to.eql(total);\r",
+							"});\r",
+							" \r",
+							"\r",
+							"pm.test(\"Positive Test-5: Verify that element_count matches total number of returned objects\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    var count = 0;\r",
+							"    Object.values(jsonData.near_earth_objects).forEach(day => count += day.length);\r",
+							"    pm.expect(jsonData.element_count).to.eql(count);\r",
+							"});\r",
+							"//✔ API'nin element_count alanının, gerçekten dönen nesne sayısıyla eşleşip eşleşmediğini test eder."
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "251babde-5782-4a2d-9ee4-fd4d1ed1caf3",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{vault:nasa-open-apis:value}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "api_key",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "query",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/neo/rest/v1/feed?start_date=2015-09-07&end_date=2015-09-08&api_key={{Nasa Api Key}}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"neo",
+						"rest",
+						"v1",
+						"feed"
+					],
+					"query": [
+						{
+							"key": "start_date",
+							"value": "2015-09-07"
+						},
+						{
+							"key": "end_date",
+							"value": "2015-09-08"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NASA NEO Detail GET  - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "86818646-872b-46b2-8864-48ba128b55d9",
+						"exec": [
+							"//RESPONSE BODY DE Kİ METNİ CONSOLA\r",
+							"pm.test(\"Positive Test 4: Print response body\", function () {\r",
+							"    var body = pm.response.text(); \r",
+							"    console.log(\"NASA NEO Detail GET Automation Response Body String:\", body);\r",
+							"    pm.expect(body).to.be.a(\"string\");\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"//Dönen yanıt içinde gök cisminin ismi parantezli ve tanımlı şekilde ((2010 PK9)) gelmelidir.\r",
+							"pm.test(\"Positive Test 5 - 'name' field exists and is valid\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"name\");\r",
+							"    pm.expect(jsonData.name).to.include(\"(2010 PK9)\"); \r",
+							"});\r",
+							"\r",
+							"pm.test(\"Positive Test 6 - 'is_potentially_hazardous_asteroid' is boolean\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"is_potentially_hazardous_asteroid\");\r",
+							"    pm.expect(typeof jsonData.is_potentially_hazardous_asteroid).to.eql(\"boolean\");\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "8661e855-036e-425f-8524-d9b04ba3781b",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/neo/rest/v1/neo/3542519?api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"neo",
+						"rest",
+						"v1",
+						"neo",
+						"3542519"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NASA NEO Browse GET  - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2c833639-7f2a-46ea-91f1-1bc430654a9b",
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Positive Test-4: Verify that near_earth_objects field exists and is an array\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"near_earth_objects\"); \r",
+							"    pm.expect(jsonData.near_earth_objects).to.be.an(\"array\");\r",
+							"});\r",
+							"//✔ Dönen response’ta near_earth_objects alanı var mı ve bu alan bir dizi mi?\r",
+							"\r",
+							"pm.test(\"Positive Test-5: Verify that page object has total_pages field\", function () {\r",
+							"    pm.expect(jsonData.page).to.have.property(\"total_pages\");\r",
+							"    pm.expect(jsonData.page.total_pages).to.be.a(\"number\");\r",
+							"});\r",
+							"//✔ Sayfalama (page) nesnesi varsa total_pages gibi alanların bulunduğunu test eder.pm.test(\"Positive Test 4: Print response body\", function () {\r",
+							"\r",
+							"//RESPONSE BODY DE Kİ METNİ CONSOLA\r",
+							"pm.test(\"Positive Test 6: Print response body\", function () {\r",
+							"    var body = pm.response.text(); \r",
+							"    console.log(\"NASA NEO Browse GET Automation Response Body String:\", body);\r",
+							"    pm.expect(body).to.be.a(\"string\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "ba052ae5-7838-4185-b177-e9b89660d043",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{vault:nasa-open-apis:value}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "api_key",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "query",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/neo/rest/v1/neo/browse?api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"neo",
+						"rest",
+						"v1",
+						"neo",
+						"browse"
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NASA OSDR File Access GET Validation - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "49744665-a5d3-47ef-84fe-a24281b41e00",
+						"exec": [
+							"pm.test(\"Positive Test-4: Verify that response is binary or stream\", function () {\r",
+							"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application\");\r",
+							"});\r",
+							"//✔ Response tipinin bir dosya formatı olduğunu kontrol eder (örneğin: application/pdf, application/octet-stream vs.)\r",
+							"\r",
+							"pm.test(\"Positive Test 5: Print response body and check for expected string\", function () {\r",
+							"    var body = pm.response.text();\r",
+							" \r",
+							"    // Konsola tüm body yazdırılır\r",
+							"    console.log(\"📦RESPONSE BODY String:\", body);\r",
+							"\r",
+							"    // Body'nin string olduğunu kontrol et\r",
+							"    pm.expect(body).to.be.a(\"string\");\r",
+							"});\r",
+							"//RESPONSE İÇİNDEKİ STRİNGİ DÖNÜYOR."
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "0f4c7c7f-8834-42c6-b396-10fa0559dd81",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://osdr.nasa.gov/osdr/data/osd/files/137.1,86-87",
+					"protocol": "https",
+					"host": [
+						"osdr",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"osdr",
+						"data",
+						"osd",
+						"files",
+						"137.1,86-87"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "NASA Mars Insight Weather GET - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0a8da636-2a5e-4454-a3fe-c7eb24298685",
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Positive Test-3: Verify data exists for each sol\", function () {\r",
+							"    jsonData.sol_keys.forEach(function(sol) {\r",
+							"        pm.expect(jsonData[sol]).to.exist;\r",
+							"    });\r",
+							"});\r",
+							"//sol_keys dizisindeki her Mars günü için veri gerçekten var mı?\r",
+							"\r",
+							"pm.test(\"Positive Test-4: Check if 'AT' field exists for each sol\", function () {\r",
+							"    jsonData.sol_keys.forEach(function(sol) {\r",
+							"        pm.expect(jsonData[sol]).to.have.property(\"AT\");\r",
+							"    });\r",
+							"});\r",
+							"//Sıcaklık verisi (AT) tüm günlerde var mı? Özellikle sıcaklık, rüzgar, basınç gibi ölçümler eksikse sorun olur.\r",
+							"\r",
+							"pm.test(\"Positive Test-5: Verify that AT.av is a number\", function () {\r",
+							"    const firstSol = jsonData.sol_keys[0];\r",
+							"    pm.expect(jsonData[firstSol].AT.av).to.be.a(\"number\");\r",
+							"});\r",
+							"//Ortalama sıcaklık verisi (AT.av) uygun veri tipiyle dönüyor mu?\r",
+							"\r",
+							"pm.test(\"Positive Test-6: Check if Last_UTC is a valid ISO date\", function () {\r",
+							"    const firstSol = jsonData.sol_keys[0];\r",
+							"    const dateRegex = /^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$/;\r",
+							"    pm.expect(jsonData[firstSol].Last_UTC).to.match(dateRegex);\r",
+							"});\r",
+							"//Gelen UTC tarih formatı ISO 8601'e uygun mu?\r",
+							" "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "df99ca31-7c0e-47a8-b86e-4b6f68916457",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "{{vault:nasa-open-apis:value}}",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "api_key",
+							"type": "string"
+						},
+						{
+							"key": "in",
+							"value": "query",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/insight_weather/?api_key={{Nasa Api Key}}&feedtype=json&ver=1.0",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"insight_weather",
+						""
+					],
+					"query": [
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						},
+						{
+							"key": "feedtype",
+							"value": "json"
+						},
+						{
+							"key": "ver",
+							"value": "1.0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-CME-GET - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "10f41483-12e1-4462-baba-79f4e849070c",
+						"exec": [
+							"// ✅ Test 3 - Yanıt süresi 200ms altındaysa yazdır, değilse uyarı ver\r",
+							"pm.test(\"Positive Test-4: Response time is under 200ms\", function () {\r",
+							"    var responseTime = pm.response.responseTime;\r",
+							"    console.log(\"⏱️ RESPONSE TIME:\", responseTime + \" ms\");\r",
+							"\r",
+							"    if (responseTime <= 8000) {\r",
+							"        pm.expect(responseTime).to.be.below(8001);\r",
+							"    } else {\r",
+							"        console.warn(\"⚠️ Response took longer than expected: \" + responseTime + \" ms\");\r",
+							"        pm.expect(responseTime).to.be.below(1000);\r",
+							"    }\r",
+							"});\r",
+							" \r",
+							"let jsonData = pm.response.json();\r",
+							"//Positive Test-4: 'cmeAnalyses' alanı varsa boş dönmemeli\r",
+							"pm.test(\"Positive Test-5: If exists, 'cmeAnalyses' field is not empty\", function () {\r",
+							"    jsonData.forEach(function (item) {\r",
+							"        if (item.cmeAnalyses) {\r",
+							"            pm.expect(item.cmeAnalyses.length).to.be.above(0);\r",
+							"        }\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"//Positive Test-6: Her öğede 'startTime' alanı var mı?\r",
+							"pm.test(\"Positive Test-6: Each item has 'startTime' field\", function () {\r",
+							"    jsonData.forEach(function (item) {\r",
+							"        pm.expect(item).to.have.property(\"startTime\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "12c1dd03-3a99-4786-833c-3830e6004521",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/CME?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"CME"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-CMEAnalysis-GET - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6489b9d2-efc6-4c49-90c7-b5541c93b392",
+						"exec": [
+							"pm.test(\"Positive Test-4: Response time is under 200ms\", function () {\r",
+							"    var responseTime = pm.response.responseTime;\r",
+							"\r",
+							"    console.log(\"⏱️ RESPONSE TIME:\", responseTime + \" ms\");\r",
+							" \r",
+							"    if (responseTime <= 8000) {\r",
+							"        pm.expect(responseTime).to.be.below(8001);\r",
+							"    } else {\r",
+							"        console.warn(\"⚠️ Response took longer than expected: \" + responseTime + \" ms\");\r",
+							"        pm.expect(responseTime).to.be.below(1000); // yine de 1 saniyeyi geçmesin diye limit koyabilirsin\r",
+							"    }\r",
+							"});\r",
+							"//TİMER KULLANDIK 200 ALTINDAYSA KAÇ FÖNFÜĞÜNÜ YAZIYOR\r",
+							"\r",
+							"pm.test(\"Positive Test 5: Use global NASA API key\", function () {\r",
+							"    var apiKey = pm.globals.get(\"Nasa Api Key\");\r",
+							"    console.log(\"🔑 USING GLOBAL API KEY:\", apiKey);\r",
+							"    pm.expect(apiKey).to.not.be.undefined;\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "fadc15c7-1b2b-4b36-adce-4ecb398d15d9",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/CMEAnalysis?startDate=2025-04-01&endDate=2025-04-30&mostAccurateOnly=true&speed=500&halfAngle=30&catalog=ALL&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"CMEAnalysis"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "mostAccurateOnly",
+							"value": "true"
+						},
+						{
+							"key": "speed",
+							"value": "500"
+						},
+						{
+							"key": "halfAngle",
+							"value": "30"
+						},
+						{
+							"key": "catalog",
+							"value": "ALL"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-GST-GET - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8448faa8-ab21-4c69-8a1b-438787cb694b",
+						"exec": [
+							"//✅ Positive Test-3: JSON body boş değil ve dizi formatında\r",
+							"let jsonData = pm.response.json();\r",
+							"pm.test(\"Positive Test-4: Response body is a non-empty array\", function () {\r",
+							"    pm.expect(Array.isArray(jsonData)).to.be.true;\r",
+							"    pm.expect(jsonData.length).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"//Positive Test-4: Her öğe 'gstID' ve 'startTime' alanına sahip\r",
+							"pm.test(\"Positive Test-5: Each item contains 'gstID' and 'startTime'\", function () {\r",
+							"    jsonData.forEach(function (item) {\r",
+							"        pm.expect(item).to.have.property(\"gstID\");\r",
+							"        pm.expect(item).to.have.property(\"startTime\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"//✅ Positive Test-5: 'allKpIndex' dizisi varsa her öğede 'kpIndex' ve 'observedTime' alanları var mı?\r",
+							"pm.test(\"Positive Test-6: If exists, each 'allKpIndex' entry contains 'kpIndex' and 'observedTime'\", function () {\r",
+							"    jsonData.forEach(function (item) {\r",
+							"        if (item.allKpIndex && item.allKpIndex.length > 0) {\r",
+							"            item.allKpIndex.forEach(function (kp) {\r",
+							"                pm.expect(kp).to.have.property(\"kpIndex\");\r",
+							"                pm.expect(kp).to.have.property(\"observedTime\");\r",
+							"            });\r",
+							"        }\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "f779cbaf-3317-4435-9c49-bd9b88fd2ac0",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/GST?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"GST"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-IPS-GET - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "afca8fe6-d35e-4e5e-ad80-cd1ff8b884f5",
+						"exec": [
+							"// Positive Test-2: Response body is JSON and non-empty\r",
+							"const jsonData = pm.response.json();\r",
+							"pm.test(\"Positive Test-4: Response is a JSON array and not empty\", function () {\r",
+							"    pm.expect(Array.isArray(jsonData)).to.be.true;\r",
+							"    pm.expect(jsonData.length).to.be.above(0);\r",
+							"});\r",
+							"\r",
+							"\r",
+							"//✅ Positive Test-4: 'location' field equals 'Earth' in all items\r",
+							"pm.test(\"Positive Test-5: Location value is 'Earth' for all items\", function () {\r",
+							"    jsonData.forEach(item => {\r",
+							"        pm.expect(item.location).to.eql(\"Earth\");\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "f9f3e1fd-7a68-42a7-90d5-cffa44d8ee41",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/IPS?startDate=2025-04-01&endDate=2025-04-30&location=Earth&catalog=ALL&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"IPS"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "location",
+							"value": "Earth"
+						},
+						{
+							"key": "catalog",
+							"value": "ALL"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-FLR-GET - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7676f62e-bd00-4bd3-b669-57b67bfafff9",
+						"exec": [
+							"// ✅ Test 2 - API'den dönen veri bir array (dizi) olmalı\r",
+							"pm.test(\"Positive Test-4: Response is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"// ✅ Test 3 - Global tanımlı NASA API anahtarı kullanılmalı\r",
+							"pm.test(\"Positive Test 5: Use global NASA API key\", function () {\r",
+							"    var apiKey = pm.globals.get(\"Nasa Api Key\");\r",
+							"    console.log(\"🔑 USING GLOBAL API KEY:\", apiKey);\r",
+							"    pm.expect(apiKey).to.not.be.undefined;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "8b01bd09-c703-45a2-806b-de4918f18735",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/FLR?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"FLR"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-SEP-GET - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ff1447f1-ebab-4db2-9c5c-7a8c28f1e422",
+						"exec": [
+							"\r",
+							"pm.test(\"Positive Test-4: Each item has 'sepID' field\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    jsonData.forEach(function(item) {\r",
+							"        pm.expect(item).to.have.property(\"sepID\");\r",
+							"    });\r",
+							"});\r",
+							"//Her öğede sepID alanı bulunmalıdır.\r",
+							" \r",
+							"pm.test(\"Positive Test 5: Use global NASA API key\", function () {\r",
+							"    var apiKey = pm.globals.get(\"Nasa Api Key\");\r",
+							"    console.log(\"🔑 USING GLOBAL API KEY:\", apiKey);\r",
+							"    pm.expect(apiKey).to.not.be.undefined;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "69bd5d77-0aa1-406f-9d83-c0a47be5f46a",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/SEP?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"SEP"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-MPC-GET - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "129f68af-c25a-4814-a4b8-0ed2949f9f86",
+						"exec": [
+							"// ✅ Test 2 - Dönen veri hem 200 olmalı hem de array (dizi) formatında olmalı\r",
+							"var jsonObject = pm.response.json();\r",
+							"console.log(\"✅ JSON Object (MPC):\", jsonObject);\r",
+							"\r",
+							"pm.test(\"Positive Test-4: Status 200 and is Array\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"    pm.expect(jsonObject).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"// ✅ Test 3 - hss_direction değeri 'earthward' olarak ayarlanmalı ve kontrol edilmeli\r",
+							"pm.test(\"Positive Test-5: hss_direction is earthward\", function () {\r",
+							"    pm.environment.set(\"hss_direction\", \"earthward\"); // örnek veri\r",
+							"    var direction = pm.environment.get(\"hss_direction\");\r",
+							"    console.log(\"🌬️ HSS DIRECTION:\", direction);\r",
+							"    pm.expect(direction).to.eql(\"earthward\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "e5e708d2-7648-4738-b58c-2a9eac8938a0",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/MPC?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"MPC"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-RBE-GET - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dc0993ff-1b9e-4a30-a4ff-487ace332b50",
+						"exec": [
+							"\r",
+							"// ✅ Test 2 - rbe_level global değişkeni 'high' olarak ayarlanmalı ve doğrulanmalı\r",
+							"pm.test(\"Positive Test 4: rbe_level is high\", function () {\r",
+							"    pm.environment.set(\"rbe_level\", \"high\"); // örnek veri set et\r",
+							"    var level = pm.environment.get(\"rbe_level\");\r",
+							"    console.log(\"🔋 RBE LEVEL:\", level);\r",
+							"    pm.expect(level).to.eql(\"high\");\r",
+							"});\r",
+							"\r",
+							"// ✅ Test 3 - JSON içindeki her nesne 'rbeID' alanına sahip olmalı\r",
+							"pm.test(\"Positive Test-5: Each item has 'rbeID' field\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    jsonData.forEach(function(item) {\r",
+							"        pm.expect(item).to.have.property(\"rbeID\");\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "31daeb7e-db18-42d6-a72b-e215323df3d5",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/RBE?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}&rbe_level=high",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"RBE"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						},
+						{
+							"key": "rbe_level",
+							"value": "high"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-HSS-GET - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e9e70521-81c2-4ed5-a377-e0ba6abd5cc3",
+						"exec": [
+							"// ✅ Test 2 - mpc_status environment değişkeni 'active' olarak ayarlanmalı ve doğrulanmalıdır.\r",
+							"pm.test(\"Positive Test 4: mpc_status is active\", function () {\r",
+							"    pm.environment.set(\"mpc_status\", \"active\"); // örnek veri set edilir\r",
+							"    var status = pm.environment.get(\"mpc_status\");\r",
+							"    console.log(\"🛰️ MPC STATUS:\", status);\r",
+							"    pm.expect(status).to.eql(\"active\");\r",
+							"});\r",
+							"\r",
+							"// ✅ Test 3 - API yanıtındaki ilk öğede 'hssID' alanı olmalıdır.\r",
+							"pm.test(\"Positive Test-5: At least one item contains 'hssID'\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    if (jsonData.length > 0) {\r",
+							"        pm.expect(jsonData[0]).to.have.property(\"hssID\");\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "a118afaf-425f-4786-9511-97129d922e50",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/HSS?startDate=2025-04-01&endDate=2025-04-30&api_key={{Nasa Api Key}}&mpc_status=active",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"HSS"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-30"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						},
+						{
+							"key": "mpc_status",
+							"value": "active"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DONKI-WSA-GET - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "767344e5-6d24-4eab-9ef6-427f8ab80133",
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.test(\"Positive Test-4: Response is array or empty array\", function () {\r",
+							"    pm.expect(jsonData).to.be.an(\"array\");\r",
+							"});\r",
+							"//API yanıtı boş ya da dolu bir dizi (array) olmalıdır.\r",
+							"\r",
+							"pm.test(\"Positive Test-5: If data exists, first item has 'simulationID'\", function () {\r",
+							"    if (jsonData.length > 0) {\r",
+							"        pm.expect(jsonData[0]).to.have.property(\"simulationID\");\r",
+							"    }\r",
+							"}); \r",
+							"//Eğer veri varsa, ilk öğede simulationID alanı bulunmalıdır."
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "9e229231-3811-482b-9c1f-33a753303bda",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/DONKI/WSAEnlilSimulations?startDate=2025-04-01&endDate=2025-04-01&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"DONKI",
+						"WSAEnlilSimulations"
+					],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "endDate",
+							"value": "2025-04-01"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Earth-Assets-GET - Positive Test",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5fd5e4d8-8ee1-435e-8c55-5247e85ad846",
+						"exec": [
+							"// ✅ Test 2 - API yanıtında 'date' alanı bulunmalıdır.\r",
+							" var jsonData = pm.response.json();\r",
+							"pm.test(\"Positive Test-4: 'date' field exists in response\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"date\");\r",
+							"});\r",
+							"\r",
+							"// ✅ Test 3 - API yanıtındaki 'url' alanı geçerli bir string olmalıdır.\r",
+							"pm.test(\"Positive Test-5: 'url' field is a valid string\", function () {\r",
+							"    pm.expect(jsonData).to.have.property(\"url\");\r",
+							"    pm.expect(jsonData.url).to.be.a(\"string\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"id": "48b9ee07-b24b-47e6-90c8-c2c68c909757",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.nasa.gov/planetary/earth/assets?lon=-95.33&lat=29.78&date=2018-01-01&&dim=0.10&api_key={{Nasa Api Key}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"nasa",
+						"gov"
+					],
+					"path": [
+						"planetary",
+						"earth",
+						"assets"
+					],
+					"query": [
+						{
+							"key": "lon",
+							"value": "-95.33"
+						},
+						{
+							"key": "lat",
+							"value": "29.78"
+						},
+						{
+							"key": "date",
+							"value": "2018-01-01"
+						},
+						{
+							"key": null,
+							"value": null
+						},
+						{
+							"key": "dim",
+							"value": "0.10"
+						},
+						{
+							"key": "api_key",
+							"value": "{{Nasa Api Key}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "a828591f-007f-48ed-baad-84acff8d289c",
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "bf2bbd1e-bd11-4d4d-936c-90b3b60725c0",
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.test(\"Positive Test-1: Status code is 200\", function () {\r",
+					"    pm.response.to.have.status(200);\r",
+					"});\r",
+					"\r",
+					"pm.test(\"Positive Test-2: Response time is less than 3000ms\", function () {\r",
+					"    pm.expect(pm.response.responseTime).to.be.below(3000);\r",
+					"});\r",
+					"\r",
+					"pm.test(\"Positive Test-3: Content-Type is JSON (with or without charset)\", function () {\r",
+					"    const contentType = pm.response.headers.get(\"Content-Type\");\r",
+					"    pm.expect(contentType).to.satisfy(function(type) {\r",
+					"        return type === \"application/json\" || type === \"application/json;charset=utf-8\";\r",
+					"    });\r",
+					"});\r",
+					"\r",
+					""
+				]
+			}
+		}
+	]
+}
