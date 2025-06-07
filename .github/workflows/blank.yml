@@ -25,9 +25,57 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+
+      - name: Install Newman
+        run: |
+         npm install -g newman
+         npm install -g newman-reporter-htmlextra
+      
+
+      - name: Fetch Postman Environment
+        run: |
+         curl -X GET "https://api.getpostman.com/environments/21344086-e7c005e1-0a0a-46f8-8356-37562aeff59a" \
+         -H "X-Api-Key: ${{ secrets.GOKHAN_KEY }}" \
+         -o environment.json
+          
+      - name: Transform Environment File
+        run: |
+         jq '.environment' environment.json > environment_transformed.json
+
+
+      - name: Debug - Show contents of environment file
+        run: |
+         echo "Contents of environment.json:"
+         cat environment.json   
+
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
+
+      # Runs a set of commands using the runners shell
+      - name: Install Postman CLI
+        run: |
+          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+
+      - name: Debug - Çalışma Alanındaki Dosyaları Listele
+        run: ls -al   
+      
+      - name: Run API tests with Newman and generate HTMLExtra report
+        run: |
+         newman run "${{ github.workspace }}/postman/collections/Restful.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export "newman-report.html"
+          
+      - name: Debug - HTML Raporunun Oluşturulup Oluşturulmadığını Kontrol Et
+        run: ls -al
+      
+      - name: Upload HTML Report
+        uses: actions/upload-artifact@v2
+        with:
+         name: newman-report
+         path: newman-report.html
 
       # Runs a set of commands using the runners shell
       - name: Install Postman CLI
