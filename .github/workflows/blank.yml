@@ -66,7 +66,8 @@ jobs:
       
       - name: Run API tests with Newman and generate HTMLExtra report
         run: |
-         newman run "${{ github.workspace }}/postman/collections/Restful.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export "newman-report.html"
+         newman run "${{ github.workspace }}/postman/collections/NASA_Negative_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export "newman-report.html"
+         newman run "${{ github.workspace }}/postman/collections/NASA_Positive_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export "newman-report.html"
           
       - name: Debug - HTML Raporunun Oluşturulup Oluşturulmadığını Kontrol Et
         run: ls -al
