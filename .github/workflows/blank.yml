@@ -18,24 +18,48 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: '22'
+      - name: Install Newman
+        run: |
+         npm install -g newman
+         npm install -g newman-reporter-htmlextra
+      
+
+      - name: Fetch Postman Environment
+        run: |
+         curl -X GET "https://api.getpostman.com/environments/21344086-e7c005e1-0a0a-46f8-8356-37562aeff59a" \
+         -H "X-Api-Key: ${{ secrets.NASA_API_KEY }}" \
+         -o environment.json
+          
+      - name: Transform Environment File
+        run: |
+         jq '.environment' environment.json > environment_transformed.json
+
+
+      - name: Debug - Show contents of environment file
+        run: |
+         echo "Contents of environment.json:"
+         cat environment.json   
 
       - name: Install Postman CLI
         run: |
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-
+          
+      - name: Debug - Çalışma Alanındaki Dosyaları Listele
+        run: ls -al  
+        
       - name: Login to Postman CLI
         run: postman login --with-api-key ${{ secrets.NASA_API_KEY }}
 
-      - name: Run NASA Negative Tests with Postman CLI
+      - name: Run API tests with Newman and generate HTMLExtra report
         run: |
-          postman collection run "${{ github.workspace }}/postman/collections/NASA_Negative_Tests.json" \
-            -e "29142931-df967d1f-7ccb-47c4-94b4-f03eb8f599dd" \
-            --integration-id "your_integration_id" \
-            --reporter-cli-no-banner
-
-      - name: Run NASA Positive Tests with Postman CLI
+         newman run "${{ github.workspace }}/postman/collections/NASA_Negative_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export "newman-report.html
+         
+      - name: Run API tests with Newman and generate HTMLExtra report
         run: |
-          postman collection run "${{ github.workspace }}/postman/collections/NASA_Positive_Tests.json" \
-            -e "29142931-df967d1f-7ccb-47c4-94b4-f03eb8f599dd" \
-            --integration-id "your_integration_id" \
-            --reporter-cli-no-banner
+         newman run "${{ github.workspace }}/postman/collections/NASA_Positive_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export "newman-report.html"
+          
+      - name: Upload HTML Report
+        uses: actions/upload-artifact@v2
+        with:
+         name: newman-report
+         path: newman-report.html
