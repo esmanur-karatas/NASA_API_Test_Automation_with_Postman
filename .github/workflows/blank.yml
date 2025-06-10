@@ -60,13 +60,13 @@ jobs:
           newman run "${{ github.workspace }}/postman/collections/NASA_Positive_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export newman-report-positive.html
 
       - name: Upload Negative HTML Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: newman-report-negative
           path: newman-report-negative.html
 
       - name: Upload Positive HTML Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: newman-report-positive
           path: newman-report-positive.html
