@@ -51,16 +51,22 @@ jobs:
       - name: Login to Postman CLI
         run: postman login --with-api-key ${{ secrets.NASA_API_KEY }}
 
-      - name: Run API tests with Newman and generate HTMLExtra report
+      - name: Run API tests with Newman and generate HTMLExtra report (Negative)
         run: |
-         newman run "${{ github.workspace }}/postman/collections/NASA_Negative_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export "newman-report.html
-         
-      - name: Run API tests with Newman and generate HTMLExtra report
+          newman run "${{ github.workspace }}/postman/collections/NASA_Negative_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export newman-report-negative.html
+
+      - name: Run API tests with Newman and generate HTMLExtra report (Positive)
         run: |
-         newman run "${{ github.workspace }}/postman/collections/NASA_Positive_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export "newman-report.html"
-          
-      - name: Upload HTML Report
+          newman run "${{ github.workspace }}/postman/collections/NASA_Positive_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export newman-report-positive.html
+
+      - name: Upload Negative HTML Report
         uses: actions/upload-artifact@v3
         with:
-         name: newman-report
-         path: newman-report.html
+          name: newman-report-negative
+          path: newman-report-negative.html
+
+      - name: Upload Positive HTML Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: newman-report-positive
+          path: newman-report-positive.html
