@@ -10,7 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
 
@@ -18,42 +17,53 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          
+
       - name: Install Newman
         run: |
-         npm install -g newman
-         npm install -g newman-reporter-htmlextra
-      
+          npm install -g newman
+          npm install -g newman-reporter-htmlextra
 
       - name: Fetch Postman Environment
         run: |
-         curl -X GET "https://api.getpostman.com/environments/21344086-e7c005e1-0a0a-46f8-8356-37562aeff59a" \
-         -H "X-Api-Key: ${{ secrets.NASA_API_KEY }}" \
-         -o environment.json
-          
+          curl -X GET "https://api.getpostman.com/environments/21344086-e7c005e1-0a0a-46f8-8356-37562aeff59a" \
+          -H "X-Api-Key: ${{ secrets.NASA_API_KEY }}" \
+          -o environment.json
+      
+      - name: Debug - Orijinal Environment Dosyasının İçeriğini Göster
+        run: |
+          echo "environment.json içeriği:"
+          cat environment.json
+
       - name: Transform Environment File
         run: |
-         jq '.environment' environment.json > environment_transformed.json
-
-
-      - name: Debug - Show contents of environment file
+          # 'environment' anahtarını çıkarıp ayrı bir dosyaya kaydeder
+          # Hata durumunda 'null' dönme riskini azaltmak için
+          # eğer jq başarısız olursa dosyanın boş kalmaması için hata kontrolü de eklenebilir.
+          jq '.environment' environment.json > environment_transformed.json || true # jq hatası durumunda bile devam et
+      
+      - name: Debug - Transformed Environment Dosyasının İçeriğini Göster
         run: |
-         echo "Contents of environment.json:"
-         cat environment.json   
+          echo "environment_transformed.json içeriği:"
+          cat environment_transformed.json
+          echo "environment_transformed.json dosya boyutu:"
+          du -b environment_transformed.json
 
       - name: Install Postman CLI
         run: |
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-          
+
       - name: Debug - Çalışma Alanındaki Dosyaları Listele
-        run: ls -al  
-        
+        run: ls -al
+
       - name: Login to Postman CLI
         run: postman login --with-api-key ${{ secrets.NASA_API_KEY }}
 
       - name: Run API tests with Newman and generate HTMLExtra report (Negative)
         run: |
           newman run "${{ github.workspace }}/postman/collections/NASA_Negative_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export newman-report-negative.html
+        # Dikkat: Eğer buradaki hata ortam dosyasından kaynaklanmıyor ve sadece test hatalarından kaynaklanıyorsa
+        # ve pozitif testlerin yine de çalışmasını istiyorsanız 'continue-on-error: true' ekleyebilirsiniz.
+        # Ancak öncelikle ortam dosyasını düzeltmeliyiz.
 
       - name: Run API tests with Newman and generate HTMLExtra report (Positive)
         run: |
