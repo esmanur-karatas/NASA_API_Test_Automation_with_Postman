@@ -27,8 +27,8 @@ jobs:
         # Bu adım, Postman API'den ortam dosyasını çeker.
         # Hata "forbiddenError" ise, ya API anahtarı yanlış/yetkisiz, ya da ortam ID'si hatalı.
         run: |
-          echo "Attempting to fetch environment with ID: 21344086-e7c005e1-0a0a-46f8-8356-37562aeff59a"
-          curl -X GET "https://api.getpostman.com/environments/21344086-e7c005e1-0a0a-46f8-8356-37562aeff59a" \
+          echo "Attempting to fetch environment with ID: df967d1f-7ccb-47c4-94b4-f03eb8f599dd"
+          curl -X GET "https://api.getpostman.com/environments/df967d1f-7ccb-47c4-94b4-f03eb8f599dd" \
           -H "X-Api-Key: ${{ secrets.NASA_API_KEY }}" \
           -o environment.json
           # Curl'ün çıkış kodunu kontrol edelim
