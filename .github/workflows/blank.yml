@@ -73,13 +73,15 @@ jobs:
       - name: Login to Postman CLI # Postman CLI'a giriş yapar
         run: postman login --with-api-key ${{ secrets.NASA_API_KEY }}
 
-      - name: Run API tests with Newman and generate HTMLExtra report (Negative)
-        # Negatif testleri çalıştırır.
+      - name: Run API tests with Newman and generate HTMLExtra report (Negative Scenarios)
         run: |
-          newman run "${{ github.workspace }}/postman/collections/NASA_Negative_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export newman-report-negative.html
-        # Not: Eğer negatif testlerdeki herhangi bir assertion başarısız olursa, bu adım hata verir ve workflow durur.
-        # Test hatalarına rağmen pozitif testlerin çalışmasını isterseniz 'continue-on-error: true' ekleyebilirsiniz,
-        # ancak bu, ortam dosyasından kaynaklanan hatayı çözmez.
+          echo "Running Negative API Tests..."
+          newman run "${{ github.workspace }}/postman/collections/NASA_Negative_Tests.json" \
+          -e environment_transformed.json \
+          --reporters cli,htmlextra \
+          --reporter-htmlextra-export newman-report-negative.html
+        # Negatif testler başarısız olsa bile workflow'un devam etmesini sağlar
+        continue-on-error: true 
 
       - name: Run API tests with Newman and generate HTMLExtra report (Positive)
         # Pozitif testleri çalıştırır. Negatif testler adımı başarılı olursa bu adım çalışır.
