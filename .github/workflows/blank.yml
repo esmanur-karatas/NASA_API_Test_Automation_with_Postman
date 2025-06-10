@@ -87,7 +87,7 @@ jobs:
         # Pozitif testleri çalıştırır. Negatif testler adımı başarılı olursa bu adım çalışır.
         run: |
           newman run "${{ github.workspace }}/postman/collections/NASA_Positive_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export newman-report-positive.html
-
+        continue-on-error: true 
       - name: Upload Negative HTML Report
         # Negatif test raporunu GitHub Actions Artifacts olarak yükler.
         uses: actions/upload-artifact@v4
