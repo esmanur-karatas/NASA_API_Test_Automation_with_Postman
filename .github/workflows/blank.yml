@@ -16,66 +16,85 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '22' # Node.js versiyonunu 22 olarak belirliyoruz
 
-      - name: Install Newman
+      - name: Install Newman and HTML Extra Reporter
         run: |
           npm install -g newman
           npm install -g newman-reporter-htmlextra
 
       - name: Fetch Postman Environment
+        # Bu adım, Postman API'den ortam dosyasını çeker.
+        # Hata "forbiddenError" ise, ya API anahtarı yanlış/yetkisiz, ya da ortam ID'si hatalı.
         run: |
+          echo "Attempting to fetch environment with ID: 21344086-e7c005e1-0a0a-46f8-8356-37562aeff59a"
           curl -X GET "https://api.getpostman.com/environments/21344086-e7c005e1-0a0a-46f8-8356-37562aeff59a" \
           -H "X-Api-Key: ${{ secrets.NASA_API_KEY }}" \
           -o environment.json
+          # Curl'ün çıkış kodunu kontrol edelim
+          if [ $? -ne 0 ]; then
+            echo "Error: Curl command failed."
+            exit 1
+          fi
+          echo "Environment file fetched to environment.json."
       
       - name: Debug - Orijinal Environment Dosyasının İçeriğini Göster
+        # Postman API'den çekilen ham environment.json dosyasının içeriğini kontrol ederiz.
+        # Burada "forbiddenError" yerine geçerli bir JSON içeriği görmeliyiz.
         run: |
           echo "environment.json içeriği:"
           cat environment.json
+          echo "environment.json dosya boyutu:"
+          du -b environment.json
 
       - name: Transform Environment File
+        # environment.json dosyasından sadece 'environment' objesini ayıklar ve Newman'ın beklediği formata dönüştürür.
+        # Eğer environment.json içinde 'environment' objesi yoksa veya boşsa, bu adım 'null' yazabilir.
         run: |
-          # 'environment' anahtarını çıkarıp ayrı bir dosyaya kaydeder
-          # Hata durumunda 'null' dönme riskini azaltmak için
-          # eğer jq başarısız olursa dosyanın boş kalmaması için hata kontrolü de eklenebilir.
-          jq '.environment' environment.json > environment_transformed.json || true # jq hatası durumunda bile devam et
+          # JQ ile dönüşümü yaparız. Eğer jq başarısız olursa (örn. input geçerli JSON değilse),
+          # stderr'e yazar ve bu komutu başarısız yapar.
+          jq '.environment' environment.json > environment_transformed.json
+          # Önemli: jq dönüşümü başarısız olursa, bir sonraki adımlar da başarısız olur.
+          # environment.json'ın geçerli bir Postman API yanıtı olduğundan emin olun.
       
       - name: Debug - Transformed Environment Dosyasının İçeriğini Göster
+        # jq sonrası environment_transformed.json dosyasının içeriğini ve boyutunu kontrol ederiz.
+        # Burada 'null' yerine geçerli bir JSON içeriği görmeliyiz.
         run: |
           echo "environment_transformed.json içeriği:"
           cat environment_transformed.json
           echo "environment_transformed.json dosya boyutu:"
           du -b environment_transformed.json
 
-      - name: Install Postman CLI
+      - name: Install Postman CLI # Postman CLI kurulumu
         run: |
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
 
-      - name: Debug - Çalışma Alanındaki Dosyaları Listele
-        run: ls -al
-
-      - name: Login to Postman CLI
+      - name: Login to Postman CLI # Postman CLI'a giriş yapar
         run: postman login --with-api-key ${{ secrets.NASA_API_KEY }}
 
       - name: Run API tests with Newman and generate HTMLExtra report (Negative)
+        # Negatif testleri çalıştırır.
         run: |
           newman run "${{ github.workspace }}/postman/collections/NASA_Negative_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export newman-report-negative.html
-        # Dikkat: Eğer buradaki hata ortam dosyasından kaynaklanmıyor ve sadece test hatalarından kaynaklanıyorsa
-        # ve pozitif testlerin yine de çalışmasını istiyorsanız 'continue-on-error: true' ekleyebilirsiniz.
-        # Ancak öncelikle ortam dosyasını düzeltmeliyiz.
+        # Not: Eğer negatif testlerdeki herhangi bir assertion başarısız olursa, bu adım hata verir ve workflow durur.
+        # Test hatalarına rağmen pozitif testlerin çalışmasını isterseniz 'continue-on-error: true' ekleyebilirsiniz,
+        # ancak bu, ortam dosyasından kaynaklanan hatayı çözmez.
 
       - name: Run API tests with Newman and generate HTMLExtra report (Positive)
+        # Pozitif testleri çalıştırır. Negatif testler adımı başarılı olursa bu adım çalışır.
         run: |
           newman run "${{ github.workspace }}/postman/collections/NASA_Positive_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export newman-report-positive.html
 
       - name: Upload Negative HTML Report
+        # Negatif test raporunu GitHub Actions Artifacts olarak yükler.
         uses: actions/upload-artifact@v4
         with:
           name: newman-report-negative
           path: newman-report-negative.html
 
       - name: Upload Positive HTML Report
+        # Pozitif test raporunu GitHub Actions Artifacts olarak yükler.
         uses: actions/upload-artifact@v4
         with:
           name: newman-report-positive
