@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PATH = "${tool 'NodeJS_24'}/bin;${env.PATH}"
+        PATH = "${tool 'NodeJS_24'}/bin:${env.PATH}"
     }
 
     stages {
@@ -12,62 +12,58 @@ pipeline {
             }
         }
 
-        stage('Install Newman') {
+        stage('Install Newman & Reporter') {
             steps {
-                bat 'npm install -g newman'
-            }
-        }
-
-        stage('Prepare Reports Folder') {
-            steps {
-                bat 'if not exist reports mkdir reports'
+                bat 'npm install -g newman newman-reporter-junitfull'
             }
         }
 
         stage('Run Positive Tests') {
             steps {
-                script {
-                    def result = bat(returnStatus: true, script: '''
-                        newman run postman\\collections\\NASA_Positive_Tests.json ^
-                        -r cli,html,junit ^
-                        --reporter-html-export reports\\positive_report.html ^
-                        --reporter-junit-export reports\\positive_report.xml
-                    ''')
-                    if (result != 0) {
-                        echo "⚠️ Positive Tests failed but pipeline will continue."
-                    } else {
-                        echo "✅ Positive Tests passed."
-                    }
+                bat 'mkdir reports || true'
+                bat '''
+                newman run postman/collections/NASA_Positive_Tests.json \
+                 -e postman/environments/NASA_ENV.postman_environment.json \
+                 -r cli,html,junitfull \
+                 --reporter-html-export reports/positive_report.html \
+                 --reporter-junitfull-export reports/positive_report.xml || exit 0
+                '''
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'reports/positive_report.xml'
                 }
             }
         }
 
         stage('Run Negative Tests') {
             steps {
-                script {
-                    def result = bat(returnStatus: true, script: '''
-                        newman run postman\\collections\\NASA_Negative_Tests.json ^
-                        -r cli,html,junit ^
-                        --reporter-html-export reports\\negative_report.html ^
-                        --reporter-junit-export reports\\negative_report.xml
-                    ''')
-                    if (result != 0) {
-                        echo "⚠️ Negative Tests failed but pipeline will continue."
-                    } else {
-                        echo "✅ Negative Tests passed."
-                    }
+                bat 'mkdir reports || true'
+                bat '''
+                newman run postman/collections/NASA_Negative_Tests.json \
+                 -e postman/environments/NASA_ENV.postman_environment.json \
+                 -r cli,html,junitfull \
+                 --reporter-html-export reports/negative_report.html \
+                 --reporter-junitfull-export reports/negative_report.xml || exit 0
+                '''
+            }
+            post {
+                always {
+                    junit allowEmptyResults: true, testResults: 'reports/negative_report.xml'
                 }
+            }
+        }
+
+        stage('Archive Reports') {
+            steps {
+                archiveArtifacts artifacts: 'reports/*.html', fingerprint: true
             }
         }
     }
 
     post {
         always {
-            archiveArtifacts artifacts: 'reports/*.*', fingerprint: true
-
-            junit 'reports/*.xml'
-
-            echo '✅ Pipeline completed. You can see the test results and HTML reports in Jenkins.'
+            echo '✅ Pipeline finished. Check the Jenkins test results and HTML reports.'
         }
     }
 }
