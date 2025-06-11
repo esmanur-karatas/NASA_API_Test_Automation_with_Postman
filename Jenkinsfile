@@ -1,44 +1,41 @@
 pipeline {
     agent any
 
-    environment {
-        PATH = "/usr/local/bin:$PATH"
+    tools {
+        nodejs 'NodeJS_20' // Eğer globalde NodeJS ayarlamadıysan bunu kaldırabilirsin.
     }
 
     stages {
         stage('Install Dependencies') {
             steps {
-                sh 'npm install -g newman newman-reporter-htmlextra'
+                bat 'npm install'
             }
         }
 
         stage('Run All Tests') {
             steps {
-                script {
-                    def exitCode = sh(
-                        script: '''
-                            newman run postman/collections/collection.json \
-                            --reporters cli,htmlextra \
-                            --reporter-htmlextra-export reports/report.html || true
-                        ''',
-                        returnStatus: true
-                    )
-                    echo "Newman exit code: ${exitCode}"
-                    // Fail olsa da pipeline devam eder
-                }
+                bat 'npm test'
             }
         }
 
         stage('Archive Report') {
             steps {
-                archiveArtifacts artifacts: 'reports/report.html', allowEmptyArchive: true
+                // Eğer rapor reports/report.html şeklindeyse, bu kısım HTML raporu Jenkins'te göstermek için
+                publishHTML(target: [
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'reports',
+                    reportFiles: 'report.html',
+                    reportName: 'Postman Test Report'
+                ])
             }
         }
     }
 
     post {
         always {
-            echo "✅ Pipeline completed. Check the HTML report in 'reports/report.html'."
+            echo '✅ Pipeline completed. Check the HTML report in "reports/report.html".'
         }
     }
 }
