@@ -1,14 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'NodeJS_20' // Jenkins > Global Tool Configuration kısmında bu ismi verdiysen
-    }
-
-    environment {
-        PATH = "${tool 'NodeJS_20'}/bin:${env.PATH}"
-    }
-
     stages {
         stage('Checkout SCM') {
             steps {
@@ -24,6 +16,7 @@ pipeline {
 
         stage('Run All Tests') {
             steps {
+                bat 'mkdir reports'
                 bat 'newman run Postman_Collections/NASA.postman_collection.json -e Postman_Environments/NASA_ENV.postman_environment.json -r cli,html --reporter-html-export reports/report.html'
             }
         }
@@ -42,7 +35,7 @@ pipeline {
 
     post {
         always {
-            echo '✅ Pipeline tamamlandı. HTML raporunu "rapor" sekmesinde görebilirsin.'
+            echo '✅ Pipeline tamamlandı. HTML raporunu Jenkins içinde görebilirsin.'
         }
     }
 }
