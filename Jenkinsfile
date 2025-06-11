@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        PATH = "${tool 'NodeJS_20'}/bin:${env.PATH}"
+        PATH = "${tool 'NodeJS_24'}/bin:${env.PATH}"
     }
 
     stages {
