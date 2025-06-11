@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'NodeJS_22' // Eğer globalde NodeJS ayarlamadıysan bunu kaldırabilirsin.
-    }
-
     stages {
         stage('Install Dependencies') {
             steps {
@@ -20,7 +16,6 @@ pipeline {
 
         stage('Archive Report') {
             steps {
-                // Eğer rapor reports/report.html şeklindeyse, bu kısım HTML raporu Jenkins'te göstermek için
                 publishHTML(target: [
                     allowMissing: false,
                     alwaysLinkToLastBuild: true,
@@ -35,7 +30,7 @@ pipeline {
 
     post {
         always {
-            echo '✅ Pipeline completed. Check the HTML report in "reports/report.html".'
+            echo '✅ Pipeline tamamlandı. HTML raporunu rapor sekmesinde görebilirsin.'
         }
     }
 }
