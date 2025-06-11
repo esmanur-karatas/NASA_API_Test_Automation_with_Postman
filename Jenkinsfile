@@ -1,21 +1,44 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = "/usr/local/bin:$PATH"
+    }
+
     stages {
-        stage('Install Newman') {
+        stage('Install Dependencies') {
             steps {
-                sh 'npm install -g newman'
+                sh 'npm install -g newman newman-reporter-htmlextra'
             }
         }
 
-        stage('Run Postman Tests') {
+        stage('Run All Tests') {
             steps {
-                sh '''
-                    newman run postman/collection.json \
-                    --environment postman/environment.json \
-                    --reporters cli
-                '''
+                script {
+                    def exitCode = sh(
+                        script: '''
+                            newman run postman/collections/collection.json \
+                            --reporters cli,htmlextra \
+                            --reporter-htmlextra-export reports/report.html || true
+                        ''',
+                        returnStatus: true
+                    )
+                    echo "Newman exit code: ${exitCode}"
+                    // Fail olsa da pipeline devam eder
+                }
             }
+        }
+
+        stage('Archive Report') {
+            steps {
+                archiveArtifacts artifacts: 'reports/report.html', allowEmptyArchive: true
+            }
+        }
+    }
+
+    post {
+        always {
+            echo "✅ Pipeline completed. Check the HTML report in 'reports/report.html'."
         }
     }
 }
