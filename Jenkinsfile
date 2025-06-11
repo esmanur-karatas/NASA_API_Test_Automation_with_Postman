@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        PATH = "${tool 'NodeJS_20'}/bin:${env.PATH}"
+    }
+
     stages {
         stage('Checkout SCM') {
             steps {
@@ -23,12 +27,7 @@ pipeline {
 
         stage('Archive Report') {
             steps {
-                archiveArtifacts artifacts: 'reports/report.html', allowEmptyArchive: true
-                publishHTML(target: [
-                    reportDir: 'reports',
-                    reportFiles: 'report.html',
-                    reportName: 'NASA API Test Raporu'
-                ])
+                archiveArtifacts artifacts: 'reports/report.html', fingerprint: true
             }
         }
     }
