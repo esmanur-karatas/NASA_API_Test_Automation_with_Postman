@@ -4,12 +4,15 @@
 </h1>
 
 <p align="center">
-  <img src="https://media.giphy.com/media/3o7abldj0b3rxrZUxW/giphy.gif" width="120" alt="rocket">
-  <img src="https://img.shields.io/badge/Postman-F24E1E?style=for-the-badge&logo=postman&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Newman-000000?style=for-the-badge&logo=newman&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Jenkins-D24939?style=for-the-badge&logo=jenkins&logoColor=white"/>
-  <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white"/>
+  
+![Rocket](https://media.giphy.com/media/3o7abldj0b3rxrZUxW/giphy.gif)  
+![Postman](https://img.shields.io/badge/Postman-F24E1E?style=for-the-badge&logo=postman&logoColor=white)
+![Newman](https://img.shields.io/badge/Newman-000000?style=for-the-badge&logo=newman&logoColor=white)
+![Jenkins](https://img.shields.io/badge/Jenkins-D24939?style=for-the-badge&logo=jenkins&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![NASA](https://img.shields.io/badge/NASA-0B3D91?style=for-the-badge&logo=nasa&logoColor=white)
+
 </p>
 
 ---
@@ -152,10 +155,16 @@ Pull requests are welcome! If you like the project, don’t forget to give it a 
 
 ---
 
+![image](https://github.com/user-attachments/assets/fca4f95c-aad7-49a5-8d81-23b56ad2e458)
+
+![image](https://github.com/user-attachments/assets/6f41789e-dcba-422d-9c76-7d68aa14e32f)
+
+
+
 ## 📬 Contact
 
-📧 Email: your.email@example.com  
-🐙 GitHub: [your-username](https://github.com/your-username)
+📧 Email: esmanurkaratas0@outlook.com
+🐙 Linkdln: https://www.linkedin.com/in/esmanur-karatas/
 
 ---
-```
+
