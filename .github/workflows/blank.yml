@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # Node.js versiyonunu 22 olarak belirliyoruz
+          node-version: '22' 
 
       - name: Install Newman and HTML Extra Reporter
         run: |
@@ -24,8 +24,7 @@ jobs:
           npm install -g newman-reporter-htmlextra
 
       - name: Fetch Postman Environment
-        # Bu adım, Postman API'den ortam dosyasını çeker.
-        # Hata "forbiddenError" ise, ya API anahtarı yanlış/yetkisiz, ya da ortam ID'si hatalı.
+       
         run: |
           echo "Attempting to fetch environment with ID: df967d1f-7ccb-47c4-94b4-f03eb8f599dd"
           curl -X GET "https://api.getpostman.com/environments/df967d1f-7ccb-47c4-94b4-f03eb8f599dd" \
@@ -39,8 +38,7 @@ jobs:
           echo "Environment file fetched to environment.json."
       
       - name: Debug - Orijinal Environment Dosyasının İçeriğini Göster
-        # Postman API'den çekilen ham environment.json dosyasının içeriğini kontrol ederiz.
-        # Burada "forbiddenError" yerine geçerli bir JSON içeriği görmeliyiz.
+        
         run: |
           echo "environment.json içeriği:"
           cat environment.json
@@ -48,8 +46,7 @@ jobs:
           du -b environment.json
 
       - name: Transform Environment File
-        # environment.json dosyasından sadece 'environment' objesini ayıklar ve Newman'ın beklediği formata dönüştürür.
-        # Eğer environment.json içinde 'environment' objesi yoksa veya boşsa, bu adım 'null' yazabilir.
+       
         run: |
           # JQ ile dönüşümü yaparız. Eğer jq başarısız olursa (örn. input geçerli JSON değilse),
           # stderr'e yazar ve bu komutu başarısız yapar.
@@ -58,19 +55,18 @@ jobs:
           # environment.json'ın geçerli bir Postman API yanıtı olduğundan emin olun.
       
       - name: Debug - Transformed Environment Dosyasının İçeriğini Göster
-        # jq sonrası environment_transformed.json dosyasının içeriğini ve boyutunu kontrol ederiz.
-        # Burada 'null' yerine geçerli bir JSON içeriği görmeliyiz.
+       
         run: |
           echo "environment_transformed.json içeriği:"
           cat environment_transformed.json
           echo "environment_transformed.json dosya boyutu:"
           du -b environment_transformed.json
 
-      - name: Install Postman CLI # Postman CLI kurulumu
+      - name: Install Postman CLI 
         run: |
           curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
 
-      - name: Login to Postman CLI # Postman CLI'a giriş yapar
+      - name: Login to Postman CLI 
         run: postman login --with-api-key ${{ secrets.NASA_API_KEY }}
 
       - name: Run API tests with Newman and generate HTMLExtra report (Negative Scenarios)
@@ -80,23 +76,23 @@ jobs:
           -e environment_transformed.json \
           --reporters cli,htmlextra \
           --reporter-htmlextra-export newman-report-negative.html
-        # Negatif testler başarısız olsa bile workflow'un devam etmesini sağlar
+       
         continue-on-error: true 
 
       - name: Run API tests with Newman and generate HTMLExtra report (Positive)
-        # Pozitif testleri çalıştırır. Negatif testler adımı başarılı olursa bu adım çalışır.
+       
         run: |
           newman run "${{ github.workspace }}/postman/collections/NASA_Positive_Tests.json" -e environment_transformed.json --reporters cli,htmlextra --reporter-htmlextra-export newman-report-positive.html
         continue-on-error: true 
       - name: Upload Negative HTML Report
-        # Negatif test raporunu GitHub Actions Artifacts olarak yükler.
+       
         uses: actions/upload-artifact@v4
         with:
           name: newman-report-negative
           path: newman-report-negative.html
 
       - name: Upload Positive HTML Report
-        # Pozitif test raporunu GitHub Actions Artifacts olarak yükler.
+    
         uses: actions/upload-artifact@v4
         with:
           name: newman-report-positive
