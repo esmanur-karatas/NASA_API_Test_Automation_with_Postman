@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS_20' // Eğer globalde NodeJS ayarlamadıysan bunu kaldırabilirsin.
+        nodejs 'NodeJS_22' // Eğer globalde NodeJS ayarlamadıysan bunu kaldırabilirsin.
     }
 
     stages {
