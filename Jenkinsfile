@@ -20,14 +20,18 @@ pipeline {
 
         stage('Run Positive Tests') {
             steps {
-                bat 'mkdir reports || true'
-                bat '''
-                newman run postman/collections/NASA_Positive_Tests.json \
-                 -e postman/environments/NASA_ENV.postman_environment.json \
-                 -r cli,html,junitfull \
-                 --reporter-html-export reports/positive_report.html \
-                 --reporter-junitfull-export reports/positive_report.xml || exit 0
-                '''
+                script {
+                    catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+                        bat '''
+                        if not exist reports mkdir reports
+                        newman run postman/collections/NASA_Positive_Tests.json ^
+                         -e postman/environments/NASA_ENV.postman_environment.json ^
+                         -r cli,html,junitfull ^
+                         --reporter-html-export reports/positive_report.html ^
+                         --reporter-junitfull-export reports/positive_report.xml
+                        '''
+                    }
+                }
             }
             post {
                 always {
@@ -38,14 +42,18 @@ pipeline {
 
         stage('Run Negative Tests') {
             steps {
-                bat 'mkdir reports || true'
-                bat '''
-                newman run postman/collections/NASA_Negative_Tests.json \
-                 -e postman/environments/NASA_ENV.postman_environment.json \
-                 -r cli,html,junitfull \
-                 --reporter-html-export reports/negative_report.html \
-                 --reporter-junitfull-export reports/negative_report.xml || exit 0
-                '''
+                script {
+                    catchError(buildResult: 'UNSTABLE', stageResult: 'UNSTABLE') {
+                        bat '''
+                        if not exist reports mkdir reports
+                        newman run postman/collections/NASA_Negative_Tests.json ^
+                         -e postman/environments/NASA_ENV.postman_environment.json ^
+                         -r cli,html,junitfull ^
+                         --reporter-html-export reports/negative_report.html ^
+                         --reporter-junitfull-export reports/negative_report.xml
+                        '''
+                    }
+                }
             }
             post {
                 always {
@@ -63,7 +71,7 @@ pipeline {
 
     post {
         always {
-            echo '✅ Pipeline finished. Check the Jenkins test results and HTML reports.'
+            echo '✅ Pipeline finished. Check Jenkins test results and HTML reports.'
         }
     }
 }
