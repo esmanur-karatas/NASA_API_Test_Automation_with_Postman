@@ -1,8 +1,8 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'NodeJS_24'   // NodeJS aracını buradan çağırmak daha stabil
+    environment {
+        PATH = "${tool 'NodeJS_24'}/bin:${env.PATH}"
     }
 
     stages {
@@ -11,30 +11,42 @@ pipeline {
                 checkout scm
             }
         }
-
+        
         stage('Install Newman') {
             steps {
                 bat 'npm install -g newman'
             }
         }
 
-        stage('Run All Tests') {
+        stage('Check Files') {
             steps {
-                bat 'if not exist reports mkdir reports'   // Hata vermez artık
-                bat 'newman run Postman_Collections/NASA.postman_collection.json -e Postman_Environments/NASA_ENV.postman_environment.json -r cli,html --reporter-html-export reports/report.html'
+                bat 'dir postman\\collections'
             }
         }
 
-        stage('Archive Report') {
+        stage('Run Positive Tests') {
             steps {
-                archiveArtifacts artifacts: 'reports/report.html', fingerprint: true
+                bat 'if not exist reports mkdir reports'
+                bat 'newman run postman/collections/NASA_Positive_Tests.json -r cli,html --reporter-html-export reports/positive_report.html'
+            }
+        }
+
+        stage('Run Negative Tests') {
+            steps {
+                bat 'newman run postman/collections/NASA_Negative_Tests.json -r cli,html --reporter-html-export reports/negative_report.html'
+            }
+        }
+
+        stage('Archive Reports') {
+            steps {
+                archiveArtifacts artifacts: 'reports/*.html', fingerprint: true
             }
         }
     }
 
     post {
         always {
-            echo '✅ Pipeline tamamlandı. HTML raporunu Jenkins içinde görebilirsin.'
+            echo '✅ Pipeline tamamlandı. HTML raporlarını Jenkins içinde görebilirsin.'
         }
     }
 }
