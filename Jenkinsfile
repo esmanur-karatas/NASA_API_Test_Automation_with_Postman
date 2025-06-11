@@ -1,8 +1,8 @@
 pipeline {
     agent any
 
-    environment {
-        PATH = "${tool 'NodeJS_24'}/bin:${env.PATH}"
+    tools {
+        nodejs 'NodeJS_24'   // NodeJS aracını buradan çağırmak daha stabil
     }
 
     stages {
@@ -20,7 +20,7 @@ pipeline {
 
         stage('Run All Tests') {
             steps {
-                bat 'mkdir reports'
+                bat 'if not exist reports mkdir reports'   // Hata vermez artık
                 bat 'newman run Postman_Collections/NASA.postman_collection.json -e Postman_Environments/NASA_ENV.postman_environment.json -r cli,html --reporter-html-export reports/report.html'
             }
         }
